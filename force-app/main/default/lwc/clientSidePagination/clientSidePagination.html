@@ -5,32 +5,70 @@
 	</template>
 	<lightning-layout>
 		<lightning-layout-item padding="around-small" size="4">
-			<lightning-combobox style="width:80px;" name="StageName" label="Show Entries" value={pageSize} options={options}
-				onchange={handleChange}></lightning-combobox>
+			<lightning-combobox
+                style       = "width:80px;"
+                name        = "StageName"
+                label       = "Show Entries"
+                value       = {pageSize}
+                options     = {options}
+				onchange    = {handleChange}
+            >
+            </lightning-combobox>
 		</lightning-layout-item>
 		<lightning-layout-item style="padding-top: 34px;" size="4">
 			<center>
-			<lightning-button icon-name="utility:desktop" label="Show Selected Account" variant="brand" onclick={showSelectedAccounts}></lightning-button>
+			    <lightning-button
+                    icon-name   = "utility:desktop"
+                    label       = "Show Selected Account"
+                    variant     = "brand"
+                    onclick     = {showSelectedAccounts}
+                >
+                </lightning-button>
 			</center>
 		</lightning-layout-item>
 		<lightning-layout-item padding="around-small" size="4">
-			<lightning-input type="search" onchange={handleKeyChange} class="slds-m-bottom_small" label="Search"
-				value={searchKey} placeholder="Type Account Name..">
+			<lightning-input
+                type        = "search"
+                onchange    = {handleKeyChange}
+                class       = "slds-m-bottom_small"
+                label       = "Search"
+				value       = {searchKey}
+                placeholder = "Type Account Name.."
+            >
 			</lightning-input>
 		</lightning-layout-item>
 	</lightning-layout>
 	<lightning-card title="Client Side Pagination With Search" icon-name="standard:account">
-		<lightning-datatable data-id="table" key-field="Id" data={data} columns={columns} sorted-by={sortedBy}
-			sorted-direction={sortedDirection} onrowselection={onRowSelection} selected-rows={allSelectedRows}
-			onsort={sortColumns}>
+		<lightning-datatable
+            data-id             = "table"
+            key-field           = "Id"
+            data                = {data}
+            columns             = {columns}
+            sorted-by           = {sortedBy}
+			sorted-direction    = {sortedDirection}
+            onrowselection      = {onRowSelection}
+            selected-rows       = {allSelectedRows}
+			onsort              = {sortColumns}>
 		</lightning-datatable>
 		<div class="slds-m-around_medium">
 			<center>
-				<lightning-button label="Previous" variant="brand" icon-name="utility:chevronleft" onclick={previousHandler}>
+				<lightning-button
+                    label       = "Previous"
+                    variant     = "brand"
+                    icon-name   = "utility:chevronleft"
+                    onclick     = {previousHandler}
+                >
 				</lightning-button>
+
 				&nbsp; Page {page} of {totalPage} &nbsp;
-				<lightning-button label="Next" variant="brand" icon-name="utility:chevronright" icon-position="right"
-					onclick={nextHandler}>
+
+				<lightning-button
+                    label           = "Next"
+                    variant         = "brand"
+                    icon-name       = "utility:chevronright"
+                    icon-position   = "right"
+					onclick={nextHandler}
+                >
 				</lightning-button>
 			</center>
 		</div>
@@ -48,15 +86,28 @@
                     </button>
                     <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Selected Account List</h2>
                 </header>
-                <!-- Modal/Popup Box LWC body starts here -->
+
+                <!-- Modal/Popup Box LWC body starts here.  This is the modal popup box that displays
+                     the list of accounts that have been selected in the main datatable -->
+
 				<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
 					<p>
-						<lightning-datatable data-id="SelectedAcctable" key-field="Id" data={allSelectedRows} columns={columns}
-						hide-checkbox-column="false" show-row-number-column="true">
+						<lightning-datatable
+                            data-id                 = "SelectedAcctable"
+                            key-field               = "Id"
+                            data                    = {allSelectedRows}
+                            columns                 = {columns}
+						    hide-checkbox-column    = "false"
+                            show-row-number-column  = "true"
+                        >
 						</lightning-datatable>
 					</p>
 				</div>
-                <!-- Modal/Popup Box LWC footer starts here -->
+
+                <!-- Modal/Popup Box LWC footer starts here. A button with the "slds-button_destructive" class is used
+                    to indicate a destructive action to the user, like permanently erasing data. Use this version when
+                    the Destructive button would be too distracting to the experience. -->
+
                 <footer class="slds-modal__footer">
                     <button class="slds-button slds-button_destructive" onclick={closeModal} title="Close">Close</button>
                 </footer>
