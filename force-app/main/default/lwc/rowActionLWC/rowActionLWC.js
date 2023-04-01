@@ -1,24 +1,24 @@
-import { LightningElement, track, wire } from 'lwc';
-import { NavigationMixin } from 'lightning/navigation';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { refreshApex } from '@salesforce/apex';
-import getAccounts from '@salesforce/apex/RowActionsHandler.getAccounts';
-import deleteAccount from '@salesforce/apex/RowActionsHandler.deleteAccount';
+import { LightningElement, track, wire }   from 'lwc';
 import { subscribe, unsubscribe, onError } from 'lightning/empApi';
+import { NavigationMixin }  from 'lightning/navigation';
+import { ShowToastEvent }   from 'lightning/platformShowToastEvent';
+import { refreshApex }      from '@salesforce/apex';
+import   getAccounts        from '@salesforce/apex/RowActionsHandler.getAccounts';
+import   deleteAccount      from '@salesforce/apex/RowActionsHandler.deleteAccount';
 
 //define row actions
 const actions = [
-    { label: 'View', name: 'view' },
-    { label: 'Edit', name: 'edit' },
+    { label: 'View',   name: 'view' },
+    { label: 'Edit',   name: 'edit' },
     { label: 'Delete', name: 'delete' }
 ];
 
 //define datatable columns with row actions
 const columns = [
-    { label: 'Name', fieldName: 'Name' },
-    { label: 'AccountNumber', fieldName: 'AccountNumber' },
-    { label: 'Type', fieldName: 'Type' },
-    { label: 'Phone', fieldName: 'Phone', type: 'Phone' },
+    { label: 'Name',            fieldName: 'Name' },
+    { label: 'AccountNumber',   fieldName: 'AccountNumber' },
+    { label: 'Type',            fieldName: 'Type' },
+    { label: 'Phone',           fieldName: 'Phone', type: 'Phone' },
     {
         type: 'action',
         typeAttributes: {
@@ -29,49 +29,64 @@ const columns = [
 ];
 
 export default class RowActionLWC extends NavigationMixin(LightningElement) {
-    @track data;
-    @track columns = columns;
-    @track showLoadingSpinner = false;
-    recordId;
-    refreshTable;
-    error;
-    subscription = {};
-    CHANNEL_NAME = '/event/RefreshDataTable__e';
+
+    @track data         = undefined;
+    @track columns      = columns;
+    @track showSpnner   = false;
+    recordId            = undefined;
+    refreshTable        = undefined;
+    error               = undefined;
+    subscription        = {};
+    CHANNEL_NAME        = '/event/RefreshDataTable__e';
 
     connectedCallback() {
+
         subscribe(this.CHANNEL_NAME, -1, this.handleEvent).then(response => {
-            console.log('Successfully subscribed to channel');
+
+            console.log('DEBUG.rowActionLWC.connectedCallback.01.1.1 Successfully subscribed to channel');
+
             this.subscription = response;
         });
 
         onError(error => {
-            console.error('Received error from server: ', error);
+
+            console.error('DEBUG.rowActionLWC.connectedCallback.01.1.2 Received error from server: ', error);
         });
     }
 
     handleEvent = event => {
+
         const refreshRecordEvent = event.data.payload;
+
         if (refreshRecordEvent.RecordId__c === this.recordId) {
-            this.recordId='';
+
+            this.recordId = '';
+
             return refreshApex(this.refreshTable);
         }
     }
 
     disconnectedCallback() {
+
         unsubscribe(this.subscription, () => {
-            console.log('Successfully unsubscribed');
+
+            console.log('DEBUG.rowActionLWC.disconnectedCallback.01.1 Successfully unsubscribed');
         });
     }
 
     // retrieving the accounts using wire service
     @wire(getAccounts)
     accounts(result) {
+
         this.refreshTable = result;
+
         if (result.data) {
+
             this.data = result.data;
             this.error = undefined;
 
         } else if (result.error) {
+
             this.error = result.error;
             this.data = undefined;
         }
@@ -110,20 +125,29 @@ export default class RowActionLWC extends NavigationMixin(LightningElement) {
     }
 
     delAccount(currentRow) {
-        this.showLoadingSpinner = true;
+
+        this.showSpnner = true;
+
         deleteAccount({ objaccount: currentRow }).then(result => {
-            window.console.log('result^^' + result);
-            this.showLoadingSpinner = false;
+
+            window.console.log('DEBUG.rowActionLWC.delAccount.01.1.1 result: ' + result);
+            this.showSpnner = false;
             this.dispatchEvent(new ShowToastEvent({
+
                 title: 'Success!!',
                 message: currentRow.Name + ' account deleted.',
                 variant: 'success'
             }));
+
             return refreshApex(this.refreshTable);
+
         }).catch(error => {
-            window.console.log('Error ====> ' + error);
-            this.showLoadingSpinner = false;
+
+            window.console.log('DEBUG.rowActionLWC.deleteAccount.01.2.1 error: ' + error);
+
+            this.showSpnner = false;
             this.dispatchEvent(new ShowToastEvent({
+
                 title: 'Error!!',
                 message: JSON.stringify(error),
                 variant: 'error'
