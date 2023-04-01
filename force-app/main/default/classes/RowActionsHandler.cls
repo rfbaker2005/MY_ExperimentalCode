@@ -1,4 +1,4 @@
- public class RowActionsHandler {
+public class RowActionsHandler {
 
     @AuraEnabled(cacheable = true)
     public static List<Account> getAccounts() {

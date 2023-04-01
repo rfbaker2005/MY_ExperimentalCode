@@ -1,4 +1,4 @@
-import { LightningElement, track, wire }   from 'lwc';
+import { LightningElement, track, wire } from 'lwc';
 import { subscribe, unsubscribe, onError } from 'lightning/empApi';
 import { NavigationMixin }  from 'lightning/navigation';
 import { ShowToastEvent }   from 'lightning/platformShowToastEvent';
