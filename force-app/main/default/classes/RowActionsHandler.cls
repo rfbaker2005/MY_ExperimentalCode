@@ -18,4 +18,4 @@
             throw new AuraHandledException(ex.getMessage());
         }
     }
- }
+}
